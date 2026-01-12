@@ -16,18 +16,60 @@
 
         <main>
             <form id="promptForm">
-                <!-- 0. Render Odağı (Yeni Özellik) -->
+                <!-- 0. Render Odağı ve Oda Seçimi -->
                 <section class="form-section" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px;">
-                    <h2 style="color: #166534;">🎯 Render Odağı (Önemli)</h2>
-                    <div class="grid-1">
+                    <h2 style="color: #166534;">🎯 Render Odağı ve Alan Bilgisi</h2>
+                    <div class="grid-2">
                         <div class="form-group">
-                            <label for="renderFocus">Görsel Ne Göstermeli?</label>
+                            <label for="renderFocus">Görsel Tipi</label>
                             <select id="renderFocus" name="renderFocus" style="border-color: #166534; border-width: 2px;">
-                                <option value="Exterior">Dış Cephe (Binanın Dıştan Görünümü)</option>
-                                <option value="Interior" selected>İç Mekan (Odanın İçinden Görünüm)</option>
-                                <option value="Isoplan">3D Kat Planı (Kuşbakışı Mobilyalı Kesit)</option>
+                                <option value="Isoplan" selected>3D Kat Planı (Tüm Daire - Kuşbakışı)</option>
+                                <option value="InteriorWide">İç Mekan - Geniş Açı (Tüm Oda Görünümü)</option>
+                                <option value="InteriorEye">İç Mekan - Göz Hizası (İnsan Bakışı)</option>
+                                <option value="InteriorCinematic">İç Mekan - Sinematik (Dramatik/Sanatsal)</option>
+                                <option value="Exterior">Dış Cephe (Bina Görünümü)</option>
                             </select>
-                            <small style="color: #15803d; margin-top: 5px;">* "İç Mekan" seçerseniz, AI duvarların içine girer ve dekorasyonu gösterir.</small>
+                        </div>
+                    </div>
+                    
+                    <div class="room-measurements" style="margin-top: 20px; background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #dcfce7;">
+                        <h3 style="font-size: 1rem; color: #166534; margin-bottom: 10px;">📏 Oda Ölçüleri (Mobilya Yerleşimi İçin)</h3>
+                        <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Ölçüleri girerseniz AI mobilya yoğunluğunu buna göre ayarlar.</p>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Salon / Oturma Alanı (m²)</label>
+                                <input type="text" name="area_salon" placeholder="Örn: 23.00">
+                            </div>
+                            <div class="form-group">
+                                <label>Mutfak (m²)</label>
+                                <input type="text" name="area_kitchen" placeholder="Örn: 10.00">
+                            </div>
+                            <div class="form-group">
+                                <label>Ebeveyn Yatak Odası (m²)</label>
+                                <input type="text" name="area_master" placeholder="Örn: 14.80">
+                            </div>
+                            <div class="form-group">
+                                <label>Diğer Oda / Çocuk Odası (m²)</label>
+                                <input type="text" name="area_room2" placeholder="Örn: 9.85">
+                            </div>
+                            <div class="form-group">
+                                <label>Banyo (m²)</label>
+                                <input type="text" name="area_bath" placeholder="Örn: 4.25">
+                            </div>
+                            <div class="form-group">
+                                <label>Balkon / Teras (m²)</label>
+                                <input type="text" name="area_balcony" placeholder="Örn: 5.40">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-top: 15px;">
+                        <div class="checkbox-group" style="align-items: center;">
+                            <label title="AI, plandaki yazıları okumaya çalışarak ölçülere sadık kalır.">
+                                <input type="checkbox" name="usePlanText" value="MetinOku" checked> 
+                                📄 "Plandaki m² yazılarını da dikkate al"
+                            </label>
                         </div>
                     </div>
                 </section>

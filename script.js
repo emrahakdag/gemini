@@ -84,8 +84,23 @@ const defaults = {
 
 const renderFocusMapping = {
     "Exterior": "Exterior architectural render, facade view, building perspective",
-    "Interior": "Interior design view, inside the room perspective, architectural interior photography, highly detailed home decor, view from inside",
+    "InteriorWide": "Wide angle interior architectural photography, showing full room context, 16mm lens, spacious look, real estate photography style",
+    "InteriorEye": "Eye-level interior view, human perspective, realistic standing view, immersive experience, standard lens",
+    "InteriorCinematic": "Cinematic interior shot, dramatic lighting, depth of field, atmospheric, moody, artistic composition, 35mm film look",
     "Isoplan": "Isometric 3D floor plan render, cutaway view, top-down view of furnished interior, wall section cut, 3d plan visualization"
+};
+
+const roomTranslations = {
+    "Salon": "Living room area",
+    "Mutfak": "Kitchen area",
+    "SalonMutfak": "Open plan living room and kitchen combination, American kitchen style",
+    "YatakOdasi": "Bedroom",
+    "EbeveynYatak": "Master bedroom",
+    "Banyo": "Bathroom",
+    "EbeveynBanyo": "En-suite master bathroom",
+    "Antre": "Entrance hall, corridor, hallway",
+    "Balkon": "Balcony, terrace area",
+    "CocukOdasi": "Kids bedroom, children's room"
 };
 
 // DOM Elements
@@ -118,8 +133,39 @@ function generatePrompt() {
         promptParts.push(renderFocusMapping[renderFocus]);
     }
 
+    // --- SPECIFIC ROOM & AREA ---
+    // Collect all area inputs
+    const areas = {
+        salon: formData.get('area_salon'),
+        kitchen: formData.get('area_kitchen'),
+        master: formData.get('area_master'),
+        room2: formData.get('area_room2'),
+        bath: formData.get('area_bath'),
+        balcony: formData.get('area_balcony')
+    };
+
+    let roomDescriptions = [];
+    if (areas.salon) roomDescriptions.push(`Spacious Living Room (${areas.salon}m²) with full furniture set`);
+    if (areas.kitchen) roomDescriptions.push(`Kitchen Area (${areas.kitchen}m²)`);
+    if (areas.master) roomDescriptions.push(`Master Bedroom (${areas.master}m²) with large bed`);
+    if (areas.room2) roomDescriptions.push(`Secondary Bedroom (${areas.room2}m²)`);
+    if (areas.bath) roomDescriptions.push(`Bathroom (${areas.bath}m²)`);
+    if (areas.balcony) roomDescriptions.push(`Balcony (${areas.balcony}m²)`);
+
+    if (roomDescriptions.length > 0) {
+        promptParts.push("**Floor plan layout containing: " + roomDescriptions.join(", ") + "**");
+        promptParts.push("maintain relative scale and furniture density according to square meter sizes");
+    }
+
+    const usePlanText = formData.get('usePlanText');
+    if (usePlanText) {
+        promptParts.push("read and adhere to room size text annotations in the plan");
+        promptParts.push("construct room proportions exactly as written in the plan");
+    }
+
     // 1. Basic Info
     const projectType = formData.get('projectType');
+    // If we have a specific room focus, the generic project type might be less relevant, but still good for context.
     promptParts.push(translations.projectType[projectType] || defaults.projectType);
 
     const floorCount = formData.get('floorCount');
