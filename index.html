@@ -1,15 +1,200 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tetris</title>
+    <title>Mimari AI Prompt Oluşturucu</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Tetris</h1>
-    <div id="score"></div>
-    <canvas id="tetris" width="200" height="400"></canvas>
+    <div class="container">
+        <header>
+            <h1>Mimari AI Prompt Oluşturucu</h1>
+            <p>Planlarınızdan 3D görsel oluşturmak için detaylı prompt hazırlayın.</p>
+        </header>
+
+        <main>
+            <form id="promptForm">
+                <!-- 0. Render Odağı (Yeni Özellik) -->
+                <section class="form-section" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px;">
+                    <h2 style="color: #166534;">🎯 Render Odağı (Önemli)</h2>
+                    <div class="grid-1">
+                        <div class="form-group">
+                            <label for="renderFocus">Görsel Ne Göstermeli?</label>
+                            <select id="renderFocus" name="renderFocus" style="border-color: #166534; border-width: 2px;">
+                                <option value="Exterior">Dış Cephe (Binanın Dıştan Görünümü)</option>
+                                <option value="Interior" selected>İç Mekan (Odanın İçinden Görünüm)</option>
+                                <option value="Isoplan">3D Kat Planı (Kuşbakışı Mobilyalı Kesit)</option>
+                            </select>
+                            <small style="color: #15803d; margin-top: 5px;">* "İç Mekan" seçerseniz, AI duvarların içine girer ve dekorasyonu gösterir.</small>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 1. Temel Mimari Bilgiler -->
+                <section class="form-section">
+                    <h2>1. Temel Mimari Bilgiler</h2>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="projectType">Proje Tipi</label>
+                            <select id="projectType" name="projectType">
+                                <option value="">Seçiniz (Varsayılan: Konut)</option>
+                                <option value="Konut">Konut / Ev</option>
+                                <option value="Villa">Villa</option>
+                                <option value="Ofis">Ofis Binası</option>
+                                <option value="Ticari">Ticari / Mağaza</option>
+                                <option value="İç Mekan">İç Mekan (Oda)</option>
+                                <option value="Kafe">Kafe / Restoran</option>
+                                <option value="Otel">Otel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="floorCount">Kat Sayısı</label>
+                            <select id="floorCount" name="floorCount">
+                                <option value="">Seçiniz</option>
+                                <option value="Tek katlı">Tek Katlı</option>
+                                <option value="İki katlı">İki Katlı / Dubleks</option>
+                                <option value="Çok katlı">Çok Katlı / Apartman</option>
+                                <option value="Gökdelen">Gökdelen</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="area">Alan Ölçüsü (m²)</label>
+                            <input type="text" id="area" name="area" placeholder="Örn: 120">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. Görselleştirme Detayları -->
+                <section class="form-section">
+                    <h2>2. Görselleştirme Detayları</h2>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="materials">Malzeme ve Yüzeyler</label>
+                            <select id="materials" name="materials">
+                                <option value="">Seçiniz</option>
+                                <option value="Beton">Brüt Beton</option>
+                                <option value="Ahşap">Ahşap Kaplama</option>
+                                <option value="Cam">Cam Cephe</option>
+                                <option value="Taş">Doğal Taş</option>
+                                <option value="Tuğla">Tuğla</option>
+                                <option value="Metal">Metal / Çelik</option>
+                                <option value="Sıva">Beyaz Sıva</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="colors">Renk Paleti</label>
+                            <select id="colors" name="colors">
+                                <option value="">Seçiniz</option>
+                                <option value="Modern">Modern / Açık Tonlar</option>
+                                <option value="Sıcak">Sıcak / Toprak Tonları</option>
+                                <option value="Koyu">Koyu / Dramatik</option>
+                                <option value="Pastel">Pastel Renkler</option>
+                                <option value="Doğal">Doğal / Yeşil Ağırlıklı</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="lighting">Aydınlatma</label>
+                            <select id="lighting" name="lighting">
+                                <option value="">Seçiniz (Varsayılan: Gün Işığı)</option>
+                                <option value="Gün Işığı">Gün Işığı / Güneşli</option>
+                                <option value="Altın Saat">Altın Saat (Gün Batımı)</option>
+                                <option value="Akşam">Akşam / Yapay Işıklar</option>
+                                <option value="Bulutlu">Bulutlu / Yumuşak Işık</option>
+                                <option value="Sinematik">Sinematik / Dramatik</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="environment">Çevre / Bağlam</label>
+                            <select id="environment" name="environment">
+                                <option value="">Seçiniz</option>
+                                <option value="Şehir">Şehir Merkezi / Sokak</option>
+                                <option value="Bahçe">Yeşil Bahçe</option>
+                                <option value="Deniz">Deniz Kenarı</option>
+                                <option value="Orman">Orman İçi</option>
+                                <option value="Boş">Boş Arazi / Stüdyo</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. Stil ve Atmosfer -->
+                <section class="form-section">
+                    <h2>3. Stil ve Atmosfer</h2>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="style">Mimari Tarz</label>
+                            <select id="style" name="style">
+                                <option value="">Seçiniz (Varsayılan: Modern)</option>
+                                <option value="Modern">Modern</option>
+                                <option value="Minimalist">Minimalist</option>
+                                <option value="Klasik">Klasik</option>
+                                <option value="Endüstriyel">Endüstriyel / Loft</option>
+                                <option value="İskandinav">İskandinav</option>
+                                <option value="Brutalist">Brutalist</option>
+                                <option value="Geleneksel">Geleneksel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="presentation">Sunum Formatı</label>
+                            <select id="presentation" name="presentation">
+                                <option value="">Seçiniz (Varsayılan: Fotorealistik)</option>
+                                <option value="Fotorealistik">Fotorealistik Render (8k)</option>
+                                <option value="Eskiz">Konsept Eskiz (Sketch)</option>
+                                <option value="Maket">Mimari Maket</option>
+                                <option value="Suluboya">Suluboya Çizim</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="camera">Kamera Açısı</label>
+                            <select id="camera" name="camera">
+                                <option value="">Seçiniz</option>
+                                <option value="Kuş Bakışı">Kuş Bakışı (Aerial)</option>
+                                <option value="Göz Hızası">İnsan Göz Hızası</option>
+                                <option value="Cephe">Cephe Görünüşü (Front)</option>
+                                <option value="İç Mekan">İç Mekan Perspektifi</option>
+                                <option value="Detay">Yakın Detay</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Opsiyonel Ekstralar -->
+                <section class="form-section optional">
+                    <h2>4. Opsiyonel Ekstralar ve Ayarlar</h2>
+                    <div class="grid-1">
+                        <div class="checkbox-group">
+                            <label style="border: 2px solid #ef4444; background-color: #fef2f2; font-weight: 600; color: #b91c1c;">
+                                <input type="checkbox" name="strictMode" value="SadıkKal"> ⚠️ Plana Birebir Sadık Kal
+                            </label>
+                            <label><input type="checkbox" name="furniture" value="Mobilyalı"> Mobilya Detayları Ekle</label>
+                            <label><input type="checkbox" name="landscape" value="Peyzaj"> Peyzaj Öğeleri (Ağaç, Çim)</label>
+                            <label><input type="checkbox" name="people" value="İnsanlar"> İnsan Figürleri (Ölçek için)</label>
+                            <label><input type="checkbox" name="cars" value="Araçlar"> Park Halinde Araçlar</label>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="actions">
+                    <button type="button" id="generateBtn" class="primary-btn">Prompt Oluştur</button>
+                    <button type="button" id="resetBtn" class="secondary-btn">Sıfırla</button>
+                </div>
+            </form>
+
+            <div class="result-section">
+                <h2>Oluşturulan Prompt (İngilizce)</h2>
+                <div class="prompt-box">
+                    <textarea id="outputPrompt" readonly placeholder="Prompt burada görünecek..."></textarea>
+                    <button id="copyBtn" title="Kopyala">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        Kopyala
+                    </button>
+                </div>
+                <p class="hint">💡 İpucu: Bu promptu Midjourney, Stable Diffusion veya DALL-E gibi araçlara yapıştırırken, planınızın JPG görselini de referans olarak eklemeyi unutmayın.</p>
+            </div>
+        </main>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

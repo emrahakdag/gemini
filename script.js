@@ -1,248 +1,197 @@
-const canvas = document.getElementById('tetris');
-const context = canvas.getContext('2d');
-
-context.scale(20, 20);
-
-function arenaSweep() {
-    let rowCount = 1;
-    outer: for (let y = arena.length - 1; y > 0; --y) {
-        for (let x = 0; x < arena[y].length; ++x) {
-            if (arena[y][x] === 0) {
-                continue outer;
-            }
-        }
-
-        const row = arena.splice(y, 1)[0].fill(0);
-        arena.unshift(row);
-        ++y;
-
-        player.score += rowCount * 10;
-        rowCount *= 2;
+// Translation and Mapping Database
+const translations = {
+    projectType: {
+        "Konut": "Residential house, modern home architecture",
+        "Villa": "Luxury villa, contemporary residence",
+        "Ofis": "Modern office building, corporate headquarters, glass facade",
+        "Ticari": "Commercial building, retail store, shopping complex",
+        "İç Mekan": "Interior design, architectural interior, realistic room",
+        "Kafe": "Cozy cafe, restaurant interior, hospitality design",
+        "Otel": "Luxury hotel building, resort architecture"
+    },
+    floorCount: {
+        "Tek katlı": "single story, low-rise",
+        "İki katlı": "two-story, duplex",
+        "Çok katlı": "multi-story, mid-rise building",
+        "Gökdelen": "skyscraper, high-rise tower"
+    },
+    materials: {
+        "Beton": "raw concrete texture, brutalist architecture, exposed concrete",
+        "Ahşap": "natural timber cladding, wood siding, warm tones",
+        "Cam": "floor-to-ceiling glass windows, transparent facade, curtain wall",
+        "Taş": "natural stone cladding, textured stone wall",
+        "Tuğla": "red brick facade, exposed brickwork",
+        "Metal": "metallic facade, steel structure, aluminium panels",
+        "Sıva": "clean white stucco, minimal white facade"
+    },
+    colors: {
+        "Modern": "neutral color palette, white and grey tones",
+        "Sıcak": "warm earth tones, beige and brown palette",
+        "Koyu": "dark monochromatic tones, black and charcoal",
+        "Pastel": "soft pastel colors, light airy atmosphere",
+        "Doğal": "natural organic colors, green and wood tones"
+    },
+    lighting: {
+        "Gün Işığı": "bright natural daylight, sunny day, clear blue sky",
+        "Altın Saat": "golden hour lighting, warm sunset light, long shadows",
+        "Akşam": "night time, cinematic exterior lighting, glowing windows, blue hour",
+        "Bulutlu": "overcast soft light, diffused light, moody atmosphere",
+        "Sinematik": "dramatic cinematic lighting, high contrast, studio lighting"
+    },
+    environment: {
+        "Şehir": "urban street context, city background, sidewalk",
+        "Bahçe": "lush green garden, manicured lawn, trees",
+        "Deniz": "seaside location, ocean view background, beach",
+        "Orman": "forest surroundings, pine trees, nature",
+        "Boş": "clean studio background, minimalist setting"
+    },
+    style: {
+        "Modern": "Modern architecture, clean lines, contemporary design",
+        "Minimalist": "Minimalist architecture, simple geometry, less is more",
+        "Klasik": "Classical architecture, ornamental details, traditional",
+        "Endüstriyel": "Industrial loft style, exposed steel and pipes",
+        "İskandinav": "Scandinavian design, nordic style, functional",
+        "Brutalist": "Brutalist style, massive geometric structures",
+        "Geleneksel": "Traditional vernacular architecture"
+    },
+    presentation: {
+        "Fotorealistik": "8k resolution, photorealistic render, unreal engine 5, architectural photography",
+        "Eskiz": "architectural sketch, pencil drawing style, concept art",
+        "Maket": "architectural model style, diorama, tilt-shift effect",
+        "Suluboya": "watercolor architectural rendering, artistic style"
+    },
+    camera: {
+        "Kuş Bakışı": "aerial view, bird's eye view, drone shot",
+        "Göz Hızası": "eye-level perspective, street view",
+        "Cephe": "straight front facade view, elevation",
+        "İç Mekan": "wide angle interior shot",
+        "Detay": "close-up architectural detail, depth of field"
+    },
+    extras: {
+        "Mobilyalı": "fully furnished, detailed interior decoration",
+        "Peyzaj": "landscaped gardens, trees, foliage",
+        "İnsanlar": "walking people for scale, lively atmosphere",
+        "Araçlar": "parked luxury cars"
     }
-}
-
-function collide(arena, player) {
-    const m = player.matrix;
-    const o = player.pos;
-    for (let y = 0; y < m.length; ++y) {
-        for (let x = 0; x < m[y].length; ++x) {
-            if (m[y][x] !== 0 &&
-               (arena[y + o.y] &&
-                arena[y + o.y][x + o.x]) !== 0) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-function createMatrix(w, h) {
-    const matrix = [];
-    while (h--) {
-        matrix.push(new Array(w).fill(0));
-    }
-    return matrix;
-}
-
-function createPiece(type) {
-    if (type === 'I') {
-        return [
-            [0, 1, 0, 0],
-            [0, 1, 0, 0],
-            [0, 1, 0, 0],
-            [0, 1, 0, 0],
-        ];
-    } else if (type === 'L') {
-        return [
-            [0, 2, 0],
-            [0, 2, 0],
-            [0, 2, 2],
-        ];
-    } else if (type === 'J') {
-        return [
-            [0, 3, 0],
-            [0, 3, 0],
-            [3, 3, 0],
-        ];
-    } else if (type === 'O') {
-        return [
-            [4, 4],
-            [4, 4],
-        ];
-    } else if (type === 'Z') {
-        return [
-            [5, 5, 0],
-            [0, 5, 5],
-            [0, 0, 0],
-        ];
-    } else if (type === 'S') {
-        return [
-            [0, 6, 6],
-            [6, 6, 0],
-            [0, 0, 0],
-        ];
-    } else if (type === 'T') {
-        return [
-            [0, 7, 0],
-            [7, 7, 7],
-            [0, 0, 0],
-        ];
-    }
-}
-
-function drawMatrix(matrix, offset) {
-    matrix.forEach((row, y) => {
-        row.forEach((value, x) => {
-            if (value !== 0) {
-                context.fillStyle = colors[value];
-                context.fillRect(x + offset.x,
-                                 y + offset.y,
-                                 1, 1);
-            }
-        });
-    });
-}
-
-function draw() {
-    context.fillStyle = '#000';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-
-    drawMatrix(arena, {x: 0, y: 0});
-    drawMatrix(player.matrix, player.pos);
-}
-
-function merge(arena, player) {
-    player.matrix.forEach((row, y) => {
-        row.forEach((value, x) => {
-            if (value !== 0) {
-                arena[y + player.pos.y][x + player.pos.x] = value;
-            }
-        });
-    });
-}
-
-function rotate(matrix, dir) {
-    for (let y = 0; y < matrix.length; ++y) {
-        for (let x = 0; x < y; ++x) {
-            [
-                matrix[x][y],
-                matrix[y][x],
-            ] = [
-                matrix[y][x],
-                matrix[x][y],
-            ];
-        }
-    }
-
-    if (dir > 0) {
-        matrix.forEach(row => row.reverse());
-    } else {
-        matrix.reverse();
-    }
-}
-
-function playerDrop() {
-    player.pos.y++;
-    if (collide(arena, player)) {
-        player.pos.y--;
-        merge(arena, player);
-        playerReset();
-        arenaSweep();
-        updateScore();
-    }
-    dropCounter = 0;
-}
-
-function playerMove(offset) {
-    player.pos.x += offset;
-    if (collide(arena, player)) {
-        player.pos.x -= offset;
-    }
-}
-
-function playerReset() {
-    const pieces = 'TJLOSZI';
-    player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
-    player.pos.y = 0;
-    player.pos.x = (arena[0].length / 2 | 0) -
-                   (player.matrix[0].length / 2 | 0);
-    if (collide(arena, player)) {
-        arena.forEach(row => row.fill(0));
-        player.score = 0;
-        updateScore();
-    }
-}
-
-function playerRotate(dir) {
-    const pos = player.pos.x;
-    let offset = 1;
-    rotate(player.matrix, dir);
-    while (collide(arena, player)) {
-        player.pos.x += offset;
-        offset = -(offset + (offset > 0 ? 1 : -1));
-        if (offset > player.matrix[0].length) {
-            rotate(player.matrix, -dir);
-            player.pos.x = pos;
-            return;
-        }
-    }
-}
-
-let dropCounter = 0;
-let dropInterval = 1000;
-
-let lastTime = 0;
-function update(time = 0) {
-    const deltaTime = time - lastTime;
-
-    dropCounter += deltaTime;
-    if (dropCounter > dropInterval) {
-        playerDrop();
-    }
-
-    lastTime = time;
-
-    draw();
-    requestAnimationFrame(update);
-}
-
-function updateScore() {
-    document.getElementById('score').innerText = player.score;
-}
-
-document.addEventListener('keydown', event => {
-    if (event.keyCode === 37) {
-        playerMove(-1);
-    } else if (event.keyCode === 39) {
-        playerMove(1);
-    } else if (event.keyCode === 40) {
-        playerDrop();
-    } else if (event.keyCode === 81) {
-        playerRotate(-1);
-    } else if (event.keyCode === 87) {
-        playerRotate(1);
-    }
-});
-
-const colors = [
-    null,
-    '#FF0D72',
-    '#0DC2FF',
-    '#0DFF72',
-    '#F538FF',
-    '#FF8E0D',
-    '#FFE138',
-    '#3877FF',
-];
-
-const arena = createMatrix(12, 20);
-
-const player = {
-    pos: {x: 0, y: 0},
-    matrix: null,
-    score: 0,
 };
 
-playerReset();
-updateScore();
-update();
+const defaults = {
+    projectType: "Architectural structure",
+    style: "Modern architecture",
+    lighting: "natural daylight",
+    presentation: "8k resolution, photorealistic render, architectural photography, hyperrealistic"
+};
+
+const renderFocusMapping = {
+    "Exterior": "Exterior architectural render, facade view, building perspective",
+    "Interior": "Interior design view, inside the room perspective, architectural interior photography, highly detailed home decor, view from inside",
+    "Isoplan": "Isometric 3D floor plan render, cutaway view, top-down view of furnished interior, wall section cut, 3d plan visualization"
+};
+
+// DOM Elements
+const form = document.getElementById('promptForm');
+const generateBtn = document.getElementById('generateBtn');
+const resetBtn = document.getElementById('resetBtn');
+const outputPrompt = document.getElementById('outputPrompt');
+const copyBtn = document.getElementById('copyBtn');
+
+// Generate Function
+function generatePrompt() {
+    const formData = new FormData(form);
+    let promptParts = [];
+
+    // --- STRICT MODE CHECK ---
+    const strictMode = formData.get('strictMode');
+    if (strictMode) {
+        // High priority instructions first
+        promptParts.push("**STRICTLY follow the provided floor plan layout**");
+        promptParts.push("exact architectural structure match to input image");
+        promptParts.push("do not alter the walls or geometry");
+        promptParts.push("maintain exact proportions");
+    } else {
+        // Loose/Creative mode implicit
+    }
+
+    // --- RENDER FOCUS (NEW) ---
+    const renderFocus = formData.get('renderFocus');
+    if (renderFocus && renderFocusMapping[renderFocus]) {
+        promptParts.push(renderFocusMapping[renderFocus]);
+    }
+
+    // 1. Basic Info
+    const projectType = formData.get('projectType');
+    promptParts.push(translations.projectType[projectType] || defaults.projectType);
+
+    const floorCount = formData.get('floorCount');
+    if (floorCount) promptParts.push(translations.floorCount[floorCount]);
+
+    // Area handled implicitly by scale
+
+    // 2. Style
+    const style = formData.get('style');
+    promptParts.push(translations.style[style] || defaults.style);
+
+    // 3. Visualization Details
+    const material = formData.get('materials');
+    if (material) promptParts.push(translations.materials[material]);
+
+    const color = formData.get('colors');
+    if (color) promptParts.push(translations.colors[color]);
+
+    const lighting = formData.get('lighting');
+    promptParts.push(translations.lighting[lighting] || defaults.lighting);
+
+    const environment = formData.get('environment');
+    if (environment) promptParts.push(translations.environment[environment]);
+
+    // 4. Camera & Presentation
+    const camera = formData.get('camera');
+    if (camera) promptParts.push(translations.camera[camera]);
+
+    const presentation = formData.get('presentation');
+    promptParts.push(translations.presentation[presentation] || defaults.presentation);
+
+    // 5. Extras
+    const extras = [
+        formData.get('furniture'),
+        formData.get('landscape'),
+        formData.get('people'),
+        formData.get('cars')
+    ];
+    
+    extras.forEach(extra => {
+        if (extra && translations.extras[extra]) {
+            promptParts.push(translations.extras[extra]);
+        }
+    });
+
+    // 6. Quality Boosters
+    promptParts.push("highly detailed, professional render, architectural visualization, sharp focus");
+
+    // Join and display
+    const finalPrompt = promptParts.join(", ");
+    outputPrompt.value = finalPrompt;
+}
+
+// Event Listeners
+generateBtn.addEventListener('click', generatePrompt);
+
+resetBtn.addEventListener('click', () => {
+    form.reset();
+    outputPrompt.value = "";
+});
+
+copyBtn.addEventListener('click', () => {
+    outputPrompt.select();
+    document.execCommand('copy');
+    
+    // Visual feedback
+    const originalText = copyBtn.innerHTML;
+    copyBtn.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Kopyalandı!
+    `;
+    setTimeout(() => {
+        copyBtn.innerHTML = originalText;
+    }, 2000);
+});
