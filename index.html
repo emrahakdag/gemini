@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mimari AI Prompt Oluşturucu</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="container">
         <header>
-            <h1>Mimari AI Prompt Oluşturucu</h1>
+            <div class="header-top">
+                <h1>Mimari AI Prompt Oluşturucu</h1>
+                <button id="themeToggle" class="theme-btn" aria-label="Karanlık Modu Aç/Kapa">🌙 Karanlık Mod</button>
+            </div>
             <p>Planlarınızdan 3D görsel oluşturmak için detaylı prompt hazırlayın.</p>
         </header>
 
         <main>
             <form id="promptForm">
                 <!-- 0. Render Odağı ve Oda Seçimi -->
-                <section class="form-section" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px;">
-                    <h2 style="color: #166534;">🎯 Render Odağı ve Alan Bilgisi</h2>
+                <section class="form-section highlight-box">
+                    <h2 class="section-title-green">🎯 Render Odağı ve Alan Bilgisi</h2>
                     <div class="grid-2">
                         <div class="form-group">
                             <label for="renderFocus">Görsel Tipi</label>
-                            <select id="renderFocus" name="renderFocus" style="border-color: #166534; border-width: 2px;">
+                            <select id="renderFocus" name="renderFocus" class="border-green">
                                 <option value="Isoplan" selected>3D Kat Planı (Tüm Daire - Kuşbakışı)</option>
                                 <option value="InteriorWide">İç Mekan - Geniş Açı (Tüm Oda Görünümü)</option>
                                 <option value="InteriorEye">İç Mekan - Göz Hizası (İnsan Bakışı)</option>
@@ -31,11 +36,11 @@
                             </select>
                         </div>
                     </div>
-                    
-                    <div class="room-measurements" style="margin-top: 20px; background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #dcfce7;">
-                        <h3 style="font-size: 1rem; color: #166534; margin-bottom: 10px;">📏 Oda Ölçüleri (Mobilya Yerleşimi İçin)</h3>
-                        <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Ölçüleri girerseniz AI mobilya yoğunluğunu buna göre ayarlar.</p>
-                        
+
+                    <div class="measurements-container">
+                        <h3 class="subsection-title">📏 Oda Ölçüleri (Mobilya Yerleşimi İçin)</h3>
+                        <p class="subsection-desc">Ölçüleri girerseniz AI mobilya yoğunluğunu buna göre ayarlar.</p>
+
                         <div class="grid-2">
                             <div class="form-group">
                                 <label>Salon / Oturma Alanı (m²)</label>
@@ -64,10 +69,10 @@
                         </div>
                     </div>
 
-                    <div class="grid-2" style="margin-top: 15px;">
-                        <div class="checkbox-group" style="align-items: center;">
+                    <div class="grid-2 checkbox-wrapper-top">
+                        <div class="checkbox-group">
                             <label title="AI, plandaki yazıları okumaya çalışarak ölçülere sadık kalır.">
-                                <input type="checkbox" name="usePlanText" value="MetinOku" checked> 
+                                <input type="checkbox" name="usePlanText" value="MetinOku" checked>
                                 📄 "Plandaki m² yazılarını da dikkate al"
                             </label>
                         </div>
@@ -158,6 +163,17 @@
                                 <option value="Boş">Boş Arazi / Stüdyo</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="aspectRatio">En-Boy Oranı (Aspect Ratio)</label>
+                            <select id="aspectRatio" name="aspectRatio">
+                                <option value="">Varsayılan (1:1)</option>
+                                <option value="16:9">16:9 (Geniş Ekran)</option>
+                                <option value="9:16">9:16 (Dikey / Hikaye)</option>
+                                <option value="4:3">4:3 (Klasik)</option>
+                                <option value="3:4">3:4 (Dikey Klasik)</option>
+                                <option value="2:1">2:1 (Sinematik)</option>
+                            </select>
+                        </div>
                     </div>
                 </section>
 
@@ -176,6 +192,18 @@
                                 <option value="İskandinav">İskandinav</option>
                                 <option value="Brutalist">Brutalist</option>
                                 <option value="Geleneksel">Geleneksel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="lens">Lens / Objektif</label>
+                            <select id="lens" name="lens">
+                                <option value="">Seçiniz</option>
+                                <option value="Wide">Geniş Açı (16mm)</option>
+                                <option value="Standard">Standart (35mm)</option>
+                                <option value="Portrait">Portre (85mm)</option>
+                                <option value="Telephoto">Telefoto (200mm)</option>
+                                <option value="Fisheye">Balık Gözü</option>
+                                <option value="Macro">Makro (Detay)</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -207,19 +235,22 @@
                     <h2>4. Opsiyonel Ekstralar ve Ayarlar</h2>
                     <div class="grid-1">
                         <div class="checkbox-group">
-                            <label style="border: 2px solid #ef4444; background-color: #fef2f2; font-weight: 600; color: #b91c1c;">
-                                <input type="checkbox" name="strictMode" value="SadıkKal"> ⚠️ Plana Birebir Sadık Kal
+                            <label class="warning-label">
+                                <input type="checkbox" name="strictMode" value="SadıkKal">
+                                <span>⚠️ Plana Birebir Sadık Kal</span>
                             </label>
-                            <label><input type="checkbox" name="furniture" value="Mobilyalı"> Mobilya Detayları Ekle</label>
-                            <label><input type="checkbox" name="landscape" value="Peyzaj"> Peyzaj Öğeleri (Ağaç, Çim)</label>
-                            <label><input type="checkbox" name="people" value="İnsanlar"> İnsan Figürleri (Ölçek için)</label>
+                            <label><input type="checkbox" name="furniture" value="Mobilyalı"> Mobilya Detayları
+                                Ekle</label>
+                            <label><input type="checkbox" name="landscape" value="Peyzaj"> Peyzaj Öğeleri (Ağaç,
+                                Çim)</label>
+                            <label><input type="checkbox" name="people" value="İnsanlar"> İnsan Figürleri (Ölçek
+                                için)</label>
                             <label><input type="checkbox" name="cars" value="Araçlar"> Park Halinde Araçlar</label>
                         </div>
                     </div>
                 </section>
-
                 <div class="actions">
-                    <button type="button" id="generateBtn" class="primary-btn">Prompt Oluştur</button>
+                    <button type="button" id="generateBtn" class="primary-btn">✨ Prompt Oluştur</button>
                     <button type="button" id="resetBtn" class="secondary-btn">Sıfırla</button>
                 </div>
             </form>
@@ -229,14 +260,20 @@
                 <div class="prompt-box">
                     <textarea id="outputPrompt" readonly placeholder="Prompt burada görünecek..."></textarea>
                     <button id="copyBtn" title="Kopyala">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
                         Kopyala
                     </button>
                 </div>
-                <p class="hint">💡 İpucu: Bu promptu Midjourney, Stable Diffusion veya DALL-E gibi araçlara yapıştırırken, planınızın JPG görselini de referans olarak eklemeyi unutmayın.</p>
+                <p class="hint">💡 İpucu: Bu promptu Midjourney, Stable Diffusion veya DALL-E gibi araçlara
+                    yapıştırırken, planınızın JPG görselini de referans olarak eklemeyi unutmayın.</p>
             </div>
         </main>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>
